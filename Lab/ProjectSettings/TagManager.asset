@@ -6,16 +6,19 @@ TagManager:
   tags:
   - Ground
   - Enemy
+  - Obstacles
+  - Pipe
+  - Background
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Obstacles
   - Water
   - UI
-  - 
-  - 
-  - 
+  - QuestionBox
+  - Spawned
+  - Background
   - 
   - 
   - 
@@ -42,4 +45,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 4293815469
+    locked: 0
+  - name: Characters
+    uniqueID: 627090895
+    locked: 0
+  - name: Obstacles
+    uniqueID: 604020703
+    locked: 0
+  - name: Consummables
+    uniqueID: 2517928989
+    locked: 0
+  - name: Player
+    uniqueID: 2649279261
     locked: 0

@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour
     private int score = 0;
     private bool countScoreState = false;
 
+    private Animator marioAnimator;
+    private AudioSource marioAudio;
+
     // Start is called before the first frame update
     void  Start()
     {
@@ -31,6 +34,8 @@ public class PlayerController : MonoBehaviour
         Application.targetFrameRate =  60;
         marioBody = GetComponent<Rigidbody2D>();
         restartText.text = ""; //set restart text to be nothing when game started
+        marioAnimator  =  GetComponent<Animator>();
+        marioAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -40,11 +45,19 @@ public class PlayerController : MonoBehaviour
       if (Input.GetKeyDown("a") && faceRightState){
           faceRightState = false;
           marioSprite.flipX = true; //Flips x direction
+            if (Mathf.Abs(marioBody.velocity.x) >  0.05) 
+            {
+                marioAnimator.SetTrigger("onSkid");
+            }
       }
 
       if (Input.GetKeyDown("d") && !faceRightState){
           faceRightState = true;
           marioSprite.flipX = false; //Does not flip x direction
+          if (Mathf.Abs(marioBody.velocity.x) >  0.05) 
+          {
+              marioAnimator.SetTrigger("onSkid");
+          }
       }
 
       if (!onGroundState && countScoreState)
@@ -53,7 +66,6 @@ public class PlayerController : MonoBehaviour
           {
               countScoreState = false;
               score++;
-              Debug.Log(score);
           }
       }
 
@@ -62,6 +74,12 @@ public class PlayerController : MonoBehaviour
       {
         SceneManager.LoadScene(0);
       }
+
+      // Assigns value to Mario skidding condition
+
+	  marioAnimator.SetFloat("xSpeed", Mathf.Abs(marioBody.velocity.x)); //Assigns value to xSpeed
+      
+
     }
 
     // FixedUpdate may be called once per frame. See documentation for details.
@@ -86,18 +104,22 @@ public class PlayerController : MonoBehaviour
           marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
           onGroundState = false;
           countScoreState = true; //check if Gomba is underneath
+          marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
         }
     }
 
     // called when the mario hits the floor
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Ground")) {
+        // If colliding with ground or obstacles
+        if (col.gameObject.CompareTag("Ground") || col.gameObject.CompareTag("Obstacles")) {
         onGroundState = true;
-        Debug.Log("hit");
         countScoreState = false; // reset score state
         scoreText.text = "Score: " + score.ToString();
+        marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
         }
+
+
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -106,10 +128,13 @@ public class PlayerController : MonoBehaviour
         {
             restartText.gameObject.SetActive(true); // Set active to be true for restart text to tell people how to restart
             restartText.text = "Press 'R' to restart";
-            Time.timeScale = 0.0f; // Restart
-            Debug.Log("Collided with Gomba!");
-            
+            Time.timeScale = 0.0f; // Restart 
         }
+    }
+
+    // Playing jump sound
+    void  PlayJumpSound(){
+	    marioAudio.PlayOneShot(marioAudio.clip);
     }
 
 }
