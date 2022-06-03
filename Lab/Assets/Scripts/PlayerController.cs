@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
 
     private Animator marioAnimator;
     private AudioSource marioAudio;
+    
+    public ParticleSystem dustCloud;
 
     // Start is called before the first frame update
     void  Start()
@@ -36,6 +38,8 @@ public class PlayerController : MonoBehaviour
         restartText.text = ""; //set restart text to be nothing when game started
         marioAnimator  =  GetComponent<Animator>();
         marioAudio = GetComponent<AudioSource>();
+
+        dustCloud = GameObject.Find("DustCloud").GetComponent<ParticleSystem>(); // cannot use GetComponent<ParticleSystem>(); directly
     }
 
     // Update is called once per frame
@@ -62,6 +66,7 @@ public class PlayerController : MonoBehaviour
 
       if (!onGroundState && countScoreState)
       {
+          dustCloud.Play(); // TODO find out where to put this
           if (Mathf.Abs(transform.position.x - enemyLocation.position.x) < 0.5f)
           {
               countScoreState = false;
@@ -106,6 +111,7 @@ public class PlayerController : MonoBehaviour
           countScoreState = true; //check if Gomba is underneath
           marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
         }
+
     }
 
     // called when the mario hits the floor
@@ -118,7 +124,6 @@ public class PlayerController : MonoBehaviour
         scoreText.text = "Score: " + score.ToString();
         marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
         }
-
 
     }
 

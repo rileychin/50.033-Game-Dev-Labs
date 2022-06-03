@@ -9,6 +9,7 @@ TagManager:
   - Obstacles
   - Pipe
   - Background
+  - DustCloud
   layers:
   - Default
   - TransparentFX
@@ -19,16 +20,16 @@ TagManager:
   - QuestionBox
   - Spawned
   - Background
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - BG1
+  - BG2
+  - BG3
+  - BG4
+  - BG5
+  - BG6
+  - BG7
+  - BG8
+  - BG9
+  - BG10
   - 
   - 
   - 
@@ -43,8 +44,14 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Parallaxbackground
+    uniqueID: 2808960637
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background_image
+    uniqueID: 1251657231
     locked: 0
   - name: Background
     uniqueID: 4293815469

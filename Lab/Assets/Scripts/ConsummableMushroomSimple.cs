@@ -16,8 +16,8 @@ public class ConsummableMushroomSimple : MonoBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
-        // rigidBody.AddForce(new Vector2(0,rigidBody.mass*5000), ForceMode2D.Force); //?
-        rigidBody.AddForce(new Vector2(0,500000), ForceMode2D.Impulse);
+        rigidBody.AddForce(Vector2.up * 10, ForceMode2D.Impulse); //?
+        //rigidBody.AddForce(new Vector2(0,), ForceMode2D.Impulse);
         if (Random.Range(0,2)==0){
             currentDirection = new Vector2(1,0);
             currDirectionState = true; // Mushroom is now moving right
