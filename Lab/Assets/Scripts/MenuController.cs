@@ -25,9 +25,12 @@ public class MenuController : MonoBehaviour
     {
       foreach (Transform eachChild in transform)
       {
-          if (eachChild.name != "Score")
+          if (eachChild.name == "Score" || eachChild.name == "Powerups")
           {
-              Debug.Log("Child found. Name: " + eachChild.name);
+
+          }
+          else
+          {
               // disable all other child
               eachChild.gameObject.SetActive(false);
               Time.timeScale = 1.0f;

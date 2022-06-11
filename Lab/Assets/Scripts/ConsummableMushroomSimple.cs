@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class ConsummableMushroomSimple : MonoBehaviour
 {
-    public  Rigidbody2D rigidBody;
+    private  Rigidbody2D rigidBody;
     private float speed = 5.0f;
-    public Vector2 currentPosition;
-    public Vector2 currentDirection;  
+    private Vector2 currentPosition;
+    private Vector2 currentDirection;  
 
-    public bool currDirectionState;
+    private bool currDirectionState;
 
-    public bool endState;
+    private bool endState;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +47,6 @@ public class ConsummableMushroomSimple : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col){
         if (col.gameObject.CompareTag("Pipe")){
-            Debug.Log(currDirectionState);
             if (currDirectionState == true){
                 currentDirection = new Vector2(-1,0); //change mushroom direction
                 currDirectionState = false;
@@ -56,14 +55,33 @@ public class ConsummableMushroomSimple : MonoBehaviour
                 currentDirection = new Vector2(1,0);
                 currDirectionState = true;
             }
-            Debug.Log(currDirectionState);
         }
         else if (col.gameObject.CompareTag("Player")){
             endState = true;
+            GetComponent<Collider2D>().enabled = false; // disable collision
+            StartCoroutine("ScaleOut"); // Consume animation
         }
     }
 
+    // TODO remove this if becomes invisible
     void  OnBecameInvisible(){
-	    Destroy(gameObject);	
+	    // Destroy(gameObject);
+        GetComponent<SpriteRenderer>().enabled = false;
     }   
+
+    IEnumerator  ScaleOut(){
+        this.transform.localScale += new Vector3(0.4f,0.4f,0); // scale it out
+        // wait for next frame
+        yield  return  null;
+
+        // render for 0.5 second
+        for (int step =  0; step  < 10; step++)
+        {
+            this.transform.localScale  =  this.transform.localScale  -  new Vector3(0.09f,0.09f,0);
+            // wait for next frame
+            yield  return  null;
+        }
+        this.transform.localScale = new Vector3(0,0,0); // then reset to 0
+
+    }
 }

@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 7246471731016205165}
   - component: {fileID: 7494368087188704090}
   - component: {fileID: -6959789207124547240}
+  - component: {fileID: -5082196008611612017}
   m_Layer: 7
-  m_Name: ConsummableMushroomSimple
+  m_Name: OrangeMushroom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1777038307
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: cbe738a6b31804fbfa01d65f850d595b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -146,8 +147,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f73f58238e9408f42bb53c75a97e0e02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidBody: {fileID: 7246471731016205165}
-  currentPosition: {x: 0, y: 0}
-  currentDirection: {x: 0, y: 0}
-  currDirectionState: 0
-  endState: 0
+--- !u!114 &-5082196008611612017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401204448265570992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0530a5e5fee1e243a99cf164f07048e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  t: {fileID: 2800000, guid: c81d76a5d6b0c8b44b9f726063779f5a, type: 3}

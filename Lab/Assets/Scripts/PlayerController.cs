@@ -20,13 +20,14 @@ public class PlayerController : MonoBehaviour
     public Transform enemyLocation;
     public Text scoreText;
     public Text restartText;
-    private int score = 0;
-    private bool countScoreState = false;
+    private bool deadState = false;
 
     private Animator marioAnimator;
     private AudioSource marioAudio;
     
     public ParticleSystem dustCloud;
+
+    public Sprite marioDeath;
 
     // Start is called before the first frame update
     void  Start()
@@ -40,106 +41,142 @@ public class PlayerController : MonoBehaviour
         marioAudio = GetComponent<AudioSource>();
 
         dustCloud = GameObject.Find("DustCloud").GetComponent<ParticleSystem>(); // cannot use GetComponent<ParticleSystem>(); directly
+        
+        GameManager.OnPlayerDeath  +=  PlayerDiesSequence; // when the player dies do a death sequence
     }
 
     // Update is called once per frame
     void Update()
     {
-      // toggle state
-      if (Input.GetKeyDown("a") && faceRightState){
-          faceRightState = false;
-          marioSprite.flipX = true; //Flips x direction
-            if (Mathf.Abs(marioBody.velocity.x) >  0.05) 
-            {
-                marioAnimator.SetTrigger("onSkid");
+        if (!deadState){
+            // toggle state
+            if (Input.GetKeyDown("a") && faceRightState){
+                faceRightState = false;
+                marioSprite.flipX = true; //Flips x direction
+                    if (Mathf.Abs(marioBody.velocity.x) >  0.05) 
+                    {
+                        marioAnimator.SetTrigger("onSkid");
+                    }
             }
-      }
 
-      if (Input.GetKeyDown("d") && !faceRightState){
-          faceRightState = true;
-          marioSprite.flipX = false; //Does not flip x direction
-          if (Mathf.Abs(marioBody.velocity.x) >  0.05) 
-          {
-              marioAnimator.SetTrigger("onSkid");
-          }
-      }
+            if (Input.GetKeyDown("d") && !faceRightState){
+                faceRightState = true;
+                marioSprite.flipX = false; //Does not flip x direction
+                if (Mathf.Abs(marioBody.velocity.x) >  0.05) 
+                {
+                    marioAnimator.SetTrigger("onSkid");
+                }
+            }
 
-      if (!onGroundState && countScoreState)
-      {
-          dustCloud.Play(); // TODO find out where to put this
-          if (Mathf.Abs(transform.position.x - enemyLocation.position.x) < 0.5f)
-          {
-              countScoreState = false;
-              score++;
-          }
-      }
-
-      // Restart mechanic
-      if(Input.GetKeyDown("r"))
-      {
-        SceneManager.LoadScene(0);
-      }
-
-      // Assigns value to Mario skidding condition
-
-	  marioAnimator.SetFloat("xSpeed", Mathf.Abs(marioBody.velocity.x)); //Assigns value to xSpeed
-      
-
+            if (!onGroundState)
+            {
+                dustCloud.Play(); // TODO find out where to put this
+            }
+            // Assigns value to Mario skidding condition
+            marioAnimator.SetFloat("xSpeed", Mathf.Abs(marioBody.velocity.x)); //Assigns value to xSpeed
+        }
+        // Restart mechanic
+        if(Input.GetKeyDown("r"))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     // FixedUpdate may be called once per frame. See documentation for details.
     void FixedUpdate()
     {
-        // dynamic rigidbody
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        if (Mathf.Abs(moveHorizontal) > 0){
-            Vector2 movement = new Vector2(moveHorizontal, 0);
-            if (marioBody.velocity.magnitude < maxSpeed)
-                    marioBody.AddForce(movement * speed);
-        }
+        if (!deadState){
+            // dynamic rigidbody
+            float moveHorizontal = Input.GetAxis("Horizontal");
+            if (Mathf.Abs(moveHorizontal) > 0){
+                Vector2 movement = new Vector2(moveHorizontal, 0);
+                if (marioBody.velocity.magnitude < maxSpeed)
+                        marioBody.AddForce(movement * speed);
+            }
 
-        if (Input.GetKeyUp("a") || Input.GetKeyUp("d")){
-            // stop
-            // marioBody.velocity = Vector2.zero; //Set all velocity to 0
-            marioBody.velocity = new Vector2(0.0f,marioBody.velocity.y); // Set x velocity to 0, keep y velocity constant
-        }
+            if (Input.GetKeyUp("a") || Input.GetKeyUp("d")){
+                // stop
+                // marioBody.velocity = Vector2.zero; //Set all velocity to 0
+                marioBody.velocity = new Vector2(0.0f,marioBody.velocity.y); // Set x velocity to 0, keep y velocity constant
+            }
 
-        if (Input.GetKeyDown("space") && onGroundState){
-            // Mario is on the ground, we add a force to go up
-          marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
-          onGroundState = false;
-          countScoreState = true; //check if Gomba is underneath
-          marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
-        }
+            if (Input.GetKeyDown("space") && onGroundState){
+                // Mario is on the ground, we add a force to go up
+            PlayJumpSound();
+            marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
+            onGroundState = false;
+            marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
+            }
 
+            if (Input.GetKeyDown("z")){
+                CentralManager.centralManagerInstance.consumePowerup(KeyCode.Z,this.gameObject);
+            }
+
+            if (Input.GetKeyDown("x")){
+                CentralManager.centralManagerInstance.consumePowerup(KeyCode.X,this.gameObject);
+            }
+        }
     }
 
+    // TODO: Uncomment when want to let mario increase score by jumping over
     // called when the mario hits the floor
     void OnCollisionEnter2D(Collision2D col)
     {
         // If colliding with ground or obstacles
         if (col.gameObject.CompareTag("Ground") || col.gameObject.CompareTag("Obstacles")) {
         onGroundState = true;
-        countScoreState = false; // reset score state
-        scoreText.text = "Score: " + score.ToString();
+        // scoreText.text = "Score: " + score.ToString();
         marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
         }
-
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
-            restartText.gameObject.SetActive(true); // Set active to be true for restart text to tell people how to restart
-            restartText.text = "Press 'R' to restart";
-            Time.timeScale = 0.0f; // Restart 
-        }
-    }
+    //TODO: Uncomment when want to set him to die
+    // void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if (other.gameObject.CompareTag("Enemy"))
+    //     {
+    //         restartText.gameObject.SetActive(true); // Set active to be true for restart text to tell people how to restart
+    //         restartText.text = "Press 'R' to restart";
+            
+    //         Time.timeScale = 0.0f; // Restart 
+
+    //     }
+    // }
 
     // Playing jump sound
     void  PlayJumpSound(){
 	    marioAudio.PlayOneShot(marioAudio.clip);
+    }
+
+    // called when the player dies
+    void  PlayerDiesSequence(){
+        // Mario dies
+        Debug.Log("Mario dies");
+        // do whatever you want here, animate etc
+        // ...
+        restartText.gameObject.SetActive(true); // Set active to be true for restart text to tell people how to restart
+        restartText.text = "Press 'R' to restart";
+        marioAnimator.SetTrigger("isDead");
+
+        marioBody.velocity = new Vector2(0,0);
+        deadState = true;
+        StartCoroutine(marioDeathDance());
+    }
+
+    IEnumerator marioDeathDance()
+    {
+        while (true)
+        {
+            marioSprite.flipY = true;
+            yield return new WaitForSeconds(0.5f);
+            marioSprite.flipY = false;
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    void OnDestroy()
+    {
+         GameManager.OnPlayerDeath  -=  PlayerDiesSequence;
     }
 
 }
