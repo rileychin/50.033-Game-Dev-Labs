@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CentralManager : MonoBehaviour
 {
@@ -8,8 +9,9 @@ public class CentralManager : MonoBehaviour
 	private GameManager gameManager;
 	private  PowerUpManager powerUpManager;
 	public  GameObject powerupManagerObject;
-	public  static  CentralManager centralManagerInstance;
 	
+	public  static  CentralManager centralManagerInstance;
+
 
 	void  Awake(){
 		centralManagerInstance  =  this;
@@ -54,4 +56,23 @@ public class CentralManager : MonoBehaviour
 	{
 		gameManager.collectCoin();
 	}
+
+	// lab 5: when user collides with door, we change scene
+	public void changeScene()
+    {
+        StartCoroutine(LoadYourAsyncScene("MarioLevel2"));
+    }
+
+
+    IEnumerator LoadYourAsyncScene(string sceneName)
+    {
+        // The Application loads the Scene in the background as the current Scene runs.
+        // This is particularly good for creating loading screens.
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+    }
 }

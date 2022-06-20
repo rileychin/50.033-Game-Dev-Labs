@@ -4,22 +4,40 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class GameManager : MonoBehaviour
 {
+  
+    // Singleton Pattern
+    private  static  GameManager _instance;
+    // Getter
+    public  static  GameManager Instance
+    {
+      get { return  _instance; }
+    }
+
 
     public Text score;
     private int playerScore =  0;
+    public GameObject panel;
+    public GameObject restart;
 
     // Start is called before the first frame update
 
-    // void Awake()
-    // {
-    //   if (__instance && null)
-    //   {
-    //     Destroy(this.gameObject);
-
-    //   }
-    // }
+    private  void  Awake()
+    {
+      // check if the _instance is not this, means it's been set before, return
+      if (_instance  !=  null  &&  _instance  !=  this)
+      {
+        Destroy(this.gameObject);
+        return;
+      }
+      
+      // otherwise, this is the first time this instance is created
+      _instance  =  this;
+      // add to preserve this object open scene loading
+      DontDestroyOnLoad(this.gameObject); // only works on root gameObjects
+    }
 
     void Start()
     {

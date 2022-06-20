@@ -9,11 +9,15 @@ public class SpawnManager : MonoBehaviour
     float groundDistance = -1.0f;
 
     // Start is called before the first frame update
+    void Awake()
+    {
+        Debug.Log("SpawnManager called");
+    }
     void Start()
     {
         GameManager.OnCollectCoin += spawnNewEnemy;
         GameManager.OnEnemyDeath += spawnNewEnemy;
-        // SceneManager.sceneLoaded += startSpawn; // will spawn a new gomba everytime the scene loads
+        SceneManager.sceneLoaded += startSpawn; // will spawn a new gomba everytime the scene loads
 
         for (int i = 0; i < 2; i++){
             spawnFromPooler(ObjectType.greenEnemy);
@@ -27,7 +31,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    void spawnFromPooler(ObjectType i)
+    private void spawnFromPooler(ObjectType i)
     {
         GameObject item = ObjectPooler.SharedInstance.GetPooledObject(i);
         Debug.Log(item);

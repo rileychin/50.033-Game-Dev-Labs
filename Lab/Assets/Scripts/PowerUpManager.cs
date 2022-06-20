@@ -23,7 +23,6 @@ public  class PowerUpManager : MonoBehaviour
         Debug.Log("adding powerup");
         if (index  <  powerupIcons.Count){
             powerupIcons[index].SetActive(true);
-            Debug.Log(texture.name);
             powerupIcons[index].GetComponent<RawImage>().texture  =  texture;
             powerups[index] =  i;
         }
@@ -39,12 +38,10 @@ public  class PowerUpManager : MonoBehaviour
     }
 
     void cast(int i, GameObject p){
-        if (powerups[i] !=  null){
-            Debug.Log("before");
+        if (powerupIcons[i].activeSelf)
+        {
             powerups[i].consumedBy(p); // interface method
-            Debug.Log("after 1");
             removePowerup(i);
-            Debug.Log("after 2");
         }
     }
 

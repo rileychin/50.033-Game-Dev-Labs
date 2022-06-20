@@ -280,6 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 7180145285043745462, guid: 5825d605a9aa4254eafb6449ec183940, type: 3}
   consummablePrefab: {fileID: 7069523795556275943, guid: 0762b3d21cada53489d0ffa3d3f70fb8, type: 3}
+  gameConstants: {fileID: 11400000, guid: d73a710d110cadf4ab35d81424c709dd, type: 2}
 --- !u!82 &8140432709172339762
 AudioSource:
   m_ObjectHideFlags: 0

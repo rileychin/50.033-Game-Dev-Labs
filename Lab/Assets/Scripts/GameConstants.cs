@@ -32,12 +32,17 @@ public class GameConstants : ScriptableObject
     
     // for testing
     public  int testValue;
-
     public float maxOffset = 5.0f;
-
     public float enemyPatroltime = 2.0f;
-
     public int groundSurface = -1;
+
+    // Mario basic starting values
+    public int playerStartingMaxSpeed = 5;
+    public int playerMaxJumpSpeed = 30;
+    public int playerDefaultForce = 150;
+
+    // use your own value, it might not be -1.0 for your case
+    public  float groundDistance =  -1.0f;
 
     // Start is called before the first frame update
     void Start()

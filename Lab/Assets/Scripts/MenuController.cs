@@ -18,11 +18,7 @@ public class MenuController : MonoBehaviour
 
     void Awake()
     {
-      Time.timeScale = 0.0f;
-    }
-
-    public void StartButtonClicked()
-    {
+      //Time.timeScale = 0.0f;
       foreach (Transform eachChild in transform)
       {
           if (eachChild.name == "Score" || eachChild.name == "Powerups")
@@ -36,5 +32,10 @@ public class MenuController : MonoBehaviour
               Time.timeScale = 1.0f;
           }
       }
+    }
+
+    public void StartButtonClicked()
+    {
+
     }
 }

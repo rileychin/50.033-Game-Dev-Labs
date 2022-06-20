@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+
     private SpriteRenderer marioSprite;
     private bool faceRightState = true;
 
@@ -27,9 +28,40 @@ public class PlayerController : MonoBehaviour
     
     public ParticleSystem dustCloud;
 
-    public Sprite marioDeath;
+    // get Player transform to init position
+    private Transform player;
+
+    // Singleton Pattern
+    private  static  PlayerController _instance;
+    // Getter
+    public  static  PlayerController Instance
+    {
+      get { return  _instance; }
+    }
 
     // Start is called before the first frame update
+
+    // how to spawn the object at the start??
+    void Awake()
+    {
+        // check if the _instance is not this, means it's been set before, return
+        if (_instance  !=  null  &&  _instance  !=  this)
+        {
+            // Set transform position of player to new position
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+            player.transform.position = new Vector3(-8.1f, 2.81f, 0);
+
+            Destroy(this.gameObject);
+            return;
+        }
+        
+        // otherwise, this is the first time this instance is created
+        _instance  =  this;
+        // add to preserve this object open scene loading
+        DontDestroyOnLoad(this.gameObject); // only works on root gameObjects
+
+    }
+
     void  Start()
     {
         marioSprite = GetComponent<SpriteRenderer>();
@@ -102,7 +134,6 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKeyDown("space") && onGroundState){
                 // Mario is on the ground, we add a force to go up
-            PlayJumpSound();
             marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
             onGroundState = false;
             marioAnimator.SetBool("onGround", onGroundState); //Assigns value to onGround
@@ -161,10 +192,12 @@ public class PlayerController : MonoBehaviour
         marioBody.velocity = new Vector2(0,0);
         deadState = true;
         StartCoroutine(marioDeathDance());
+        Debug.Log("Mario dies");
     }
 
     IEnumerator marioDeathDance()
     {
+        Debug.Log("Mario starts dying");
         while (true)
         {
             marioSprite.flipY = true;
